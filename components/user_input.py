@@ -1,7 +1,7 @@
 import streamlit as st
 from services import api_client as ac
 
-def get_user_input():
+def get_user_input(refresh_token):
     """
     Renders an input field for user messages and handles user input.
 
@@ -9,7 +9,7 @@ def get_user_input():
     :return: The user input message if submitted, else None.
     """
     st.divider()
-    user_name = ac.fetch_iam_user_name()
+    user_name = ac.fetch_iam_user_name(refresh_token)
     #print("user_name: ", user_name)
 
     if prompt := st.chat_input("Type to talk to Claude AI Chatbot!"):

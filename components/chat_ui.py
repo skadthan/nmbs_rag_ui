@@ -1,11 +1,11 @@
 import streamlit as st
 from services import api_client as ac
 
-def render_chat_ui():
+def render_chat_ui(refresh_token):
     """
     Renders the full chat UI and appends new messages dynamically.
     """
-    user_name = ac.fetch_iam_user_name()
+    user_name = ac.fetch_iam_user_name(refresh_token=refresh_token)
 
     # Ensure session state has 'last_rendered_index' to track rendered messages
     if "last_rendered_index" not in st.session_state:

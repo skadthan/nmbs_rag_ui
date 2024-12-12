@@ -2,12 +2,11 @@ import streamlit as st
 from services import api_client as ac
 from components.chat_ui import render_chat_ui
 
-def initialize_state():
+def initialize_state(user_session_id, refresh_token):
     """
     Initializes the session state variables.
     """
 
-    user_session_id="AIDAVD6I7NJDQGF3ZCQ3T"
 
     # Use a flag to ensure the function runs only once
     if "initialized" in st.session_state:
@@ -23,7 +22,7 @@ def initialize_state():
         print("if not st.session_state.chat_history")
         stored_messages = []
         try:
-            stored_messages = ac.fetch_chat_history(user_session_id=user_session_id)
+            stored_messages = ac.fetch_chat_history(user_session_id=user_session_id, refresh_token=refresh_token)
             #print("\nstored_messages\n",stored_messages)
         except Exception as e:
             print(f"Error fetching chat history: {e}")
