@@ -14,6 +14,18 @@ def fetch_response(user_query):
         return "Error connecting to the chatbot API. Please try again later."
     
 
+def fetch_contextual_response(user_query,user_session_id):
+    """
+    Sends the user's message to the backend API and retrieves the chatbot's response.
+    """
+    try:
+        response = requests.post(f"{API_BASE_URL}/chat/contextualbot", json={"session_id": user_session_id, "query": user_query})
+        response.raise_for_status()
+        return response.json().get("aiResponse", "I'm sorry, something went wrong.")
+    except requests.RequestException as e:
+        print('Exception - fetch_contextual_response: ',e)
+        return "Error connecting to the chatbot API. Please try again later."
+
 def fetch_chat_history(user_session_id):
     """
     Get's the chat history from DynamoDB Session Table.

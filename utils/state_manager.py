@@ -1,5 +1,6 @@
 import streamlit as st
 from services import api_client as ac
+from components.chat_ui import render_chat_ui
 
 def initialize_state():
     """
@@ -8,10 +9,18 @@ def initialize_state():
 
     user_session_id="AIDAVD6I7NJDQGF3ZCQ3T"
 
+    # Use a flag to ensure the function runs only once
+    if "initialized" in st.session_state:
+        return  # Skip initialization if already done
+
+    # Ensure "chat_history" key is initialized
     if "chat_history" not in st.session_state:
-        # Load the stored messages from DynamoDB
-        st.session_state["chat_history"] = []  # List of tuples (sender, message)
-        
+        print("Initializing chat_history")
+        st.session_state["chat_history"] = []  # Initialize as an empty list
+
+    # Fetch stored messages from the backend only if chat_history is empty
+    if not st.session_state["chat_history"]:
+        print("if not st.session_state.chat_history")
         stored_messages = []
         try:
             stored_messages = ac.fetch_chat_history(user_session_id=user_session_id)
@@ -24,8 +33,8 @@ def initialize_state():
         for msg in stored_messages:
             role = msg.get("type", "unknown")  # Default to "unknown" if 'type' is missing
             content = msg.get("content", "")   # Default to an empty string if 'content' is missing
-
             st.session_state["chat_history"].append({"role": role, "content": content})
     
+    st.session_state["initialized"] = True  # Set the flag
     #print("Session state keys:", st.session_state.keys())
     #print("Chat history initialized:", st.session_state["chat_history"])

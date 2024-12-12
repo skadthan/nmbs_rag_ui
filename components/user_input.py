@@ -12,20 +12,14 @@ def get_user_input():
     user_name = ac.fetch_iam_user_name()
     #print("user_name: ", user_name)
 
-    """
-    user_message = st.text_input(
-        label="Your Message:",
-        placeholder=placeholder,
-        key="user_input",
-    ) """
-
     if prompt := st.chat_input("Type to talk to Claude AI Chatbot!"):
          # Display user message in chat message container
          with st.chat_message(user_name):
-             st.markdown(prompt)
+             st.markdown(f"**:male-astronaut: ** {user_name}:** {prompt}")
+             #st.markdown(prompt)
              # Add user message to chat history
-             st.session_state.chat_history.append({"role": user_name, "content": prompt})
+             st.session_state["chat_history"].append({"role": user_name, "content": prompt})
 
     #return user_message
-    print("printing prompt", prompt)
+    #print("printing prompt", prompt)
     return prompt
