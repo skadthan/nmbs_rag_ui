@@ -5,7 +5,7 @@ from utils.state_manager import initialize_state
 from components.user_input import get_user_input
 
 # Page Configuration
-st.set_page_config(page_title="Nimbus AI Chatbot", layout="centered")
+st.set_page_config(page_title="Nimbus AI Chatbot", layout="wide")
 
 # User session identifier (you can replace this with dynamic data)
 user_session_id = "AIDAVD6I7NJDQGF3ZCQ3T"
@@ -44,6 +44,7 @@ def login_ui():
                     st.session_state.logged_in = True
                     st.session_state.username = username
                     st.success("Login successful!")
+                    st.session_state.active_page = "chatbot"  # Redirect to chatbot
                     #ui_router()
                 else:
                     st.session_state.logged_in = False
@@ -94,15 +95,14 @@ def chatbot_ui(user_name, refresh_token):
     if st.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.username = None  # Clear the username on logout
+        st.session_state.active_page = "login"  # Redirect to login
 
 def ui_router():
-    login_count=0
-    if st.session_state.logged_in:
+    if st.session_state.active_page == "chatbot" and st.session_state.logged_in:
         print("Routing to Chatbot UI")
         chatbot_ui(st.session_state.username, st.session_state.refresh_token)
     else:
-        login_count=login_count+1
-        print(f"Routing to Login UI count- {login_count}")
+        print("Routing to Login UI count")
         login_ui()
 
 # Main app logic
@@ -115,6 +115,8 @@ def main():
     if "logged_in" not in st.session_state:
         print("logged_in is not in session_sate")
         st.session_state.logged_in = False
+        st.session_state.active_page = "login"
+
     
     ui_router()
 
