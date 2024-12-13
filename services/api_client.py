@@ -29,7 +29,8 @@ def fetch_contextual_response(user_query,user_session_id, refresh_token):
         }
         response = requests.post(f"{API_BASE_URL}/chat/contextualbot", json={"session_id": user_session_id, "query": user_query},headers=headers)
         response.raise_for_status()
-        return response.json().get("aiResponse", "I'm sorry, something went wrong.")
+        #return response.json().get("aiResponse", "I'm sorry, something went wrong.")
+        return response
     except requests.RequestException as e:
         print('Exception - fetch_contextual_response: ',e)
         return "Error connecting to the chatbot API. Please try again later."
