@@ -83,35 +83,41 @@ def chatbot_ui(user_name, refresh_token):
         with st.spinner("Thinking..."):
             # Fetch the bot's response
             bot_response = fetch_contextual_response(user_message, user_session_id,refresh_token)
-            print("bot_response :", bot_response)
+            #print("bot_response :", bot_response)
             # Parse response JSON
-            human_request = bot_response.json().get("humanRequest")
-            ai_response = bot_response.json().get("aiResponse")
-            context = bot_response.json().get("context", [])
+            status_code=bot_response.json().get("status_code")
+            if status_code==200:
+                human_request = bot_response.json().get("humanRequest")
+                ai_response = bot_response.json().get("aiResponse")
+                context = bot_response.json().get("context", [])
+                # Display the human request and AI response
+                st.subheader("Chat History")
+                st.markdown(f"**Human:** {human_request}")
+                st.markdown(f"**AI:** {ai_response}")
 
-            # Display the human request and AI response
-            st.subheader("Chat History")
-            st.markdown(f"**Human:** {human_request}")
-            st.markdown(f"**AI:** {ai_response}")
+                # Display contextual information
+                if context:
+                    st.subheader("Information Sources")
+                    for idx, doc in enumerate(context):
+                        source = doc.get("metadata", {}).get("source", f"Document {idx + 1}")
+                        page_content = doc.get("page_content", "No content available.")
+                        
+                        # Display the source as a clickable link with expandable content
+                        with st.expander(f"{source}"):
+                            st.write(page_content)
 
-            # Display contextual information
-            if context:
-                st.subheader("Information Sources")
-                for idx, doc in enumerate(context):
-                    source = doc.get("metadata", {}).get("source", f"Document {idx + 1}")
-                    page_content = doc.get("page_content", "No content available.")
-                    
-                    # Display the source as a clickable link with expandable content
-                    with st.expander(f"{source}"):
-                        st.write(page_content)
+                #Display assistant response in chat message container
+                #with st.chat_message("assistant"):
+                    #st.markdown(bot_response)
+                    #st.markdown(ai_response)
 
-            # Display assistant response in chat message container
-            #with st.chat_message("assistant"):
-                #st.markdown(bot_response)
-
-            # Update chat history
-            st.session_state["chat_history"].append({"role": "human", "content": user_message})
-            st.session_state["chat_history"].append({"role": "assistant", "content": bot_response})
+                # Update chat history
+                st.session_state["chat_history"].append({"role": "human", "content": user_message})
+                #st.session_state["chat_history"].append({"role": "assistant", "content": bot_response})
+                st.session_state["chat_history"].append({"role": "assistant", "content": ai_response})
+            else:
+                error_message=bot_response.json().get("message")
+                st.markdown(f"**SYSTEM:** {error_message}")
     
     if st.button("Logout"):
         st.session_state.logged_in = False
